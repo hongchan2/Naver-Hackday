@@ -10,8 +10,10 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import timeline.hackday.snsbackend.account.Account;
 
@@ -19,6 +21,8 @@ import timeline.hackday.snsbackend.account.Account;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Board {
 
 	@Id
