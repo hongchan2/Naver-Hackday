@@ -17,13 +17,14 @@ public class BoardControllerTest extends BaseControllerTest {
 
 	@Test
 	@TestDescription("정상적으로 게시물 생성하는 테스트")
-	public void createBoard_is_Ok() throws Exception {
+	public void createBoard_Is_Ok() throws Exception {
 		Account savedAccount = getAccount();
 
 		Board board = getBoard(savedAccount);
 
 		mockMvc.perform(post("/api/board")
 			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(board)))
 			.andDo(print())
 			.andExpect(status().isOk())
@@ -42,9 +43,27 @@ public class BoardControllerTest extends BaseControllerTest {
 
 		mockMvc.perform(post("/api/board")
 			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(board)))
 			.andDo(print())
 			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@TestDescription("이벤트를 정상적으로 수정하는 테스트")
+	public void updateBoard_Is_Ok() throws Exception {
+		Account savedAccount = getAccount();
+
+		Board savedBoard = boardRepository.save(getBoard(savedAccount));
+		savedBoard.setContent("content changed!");
+
+		mockMvc.perform(put("/api/board/{id}", savedBoard.getId())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(savedBoard)))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("content").value(savedBoard.getContent()));
 	}
 
 	private Board getBoard(Account savedAccount) {
