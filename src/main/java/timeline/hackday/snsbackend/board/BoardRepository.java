@@ -1,4 +1,4 @@
-package timeline.hackday.snsbackend.Board;
+package timeline.hackday.snsbackend.board;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package timeline.hackday.snsbackend.Follow;
+package timeline.hackday.snsbackend.follow;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
