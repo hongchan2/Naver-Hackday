@@ -3,6 +3,7 @@ package timeline.hackday.snsbackend.follow;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import timeline.hackday.snsbackend.account.Account;
 import timeline.hackday.snsbackend.account.AccountRepository;
@@ -33,10 +34,24 @@ public class FollowService {
 		return true;
 	}
 
+	@Transactional
+	// TODO Minimize Query
+	public boolean unfollow(Long srcId, Long destId) {
+		Optional<Follow> optionalFollow = followRepository.findBySrc_IdAndDest_Id(srcId, destId);
+
+		if (optionalFollow.isEmpty()) {
+			return false;
+		}
+
+		followRepository.deleteBySrc_IdAndDest_Id(srcId, destId);
+		return true;
+	}
+
 	private Follow mapToFollow(Account srcAccount, Account destAccount) {
 		Follow follow = new Follow();
 		follow.setSrc(srcAccount);
 		follow.setDest(destAccount);
 		return follow;
 	}
+
 }
