@@ -8,9 +8,19 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import timeline.hackday.snsbackend.account.Account;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Board {
 
 	@Id
@@ -26,4 +36,5 @@ public class Board {
 
 	@ManyToOne
 	private Account account;
+
 }
