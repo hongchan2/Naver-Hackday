@@ -1,8 +1,13 @@
 package timeline.hackday.snsbackend.board;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import java.net.URI;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,30 +27,37 @@ public class BoardController {
 	BoardService boardService;
 
 	@PostMapping
-	public ResponseEntity createBoard(@RequestBody @Valid Board board, Errors errors) {
+	public ResponseEntity createBoard(@RequestBody @Valid BoardDto boardDto, Errors errors) {
 		if (errors.hasErrors()) {
 			return ResponseEntity.badRequest().build();
 		}
 
-		boardService.createBoard(board);
-		return ResponseEntity.ok(board);
+		Long createdBoardId = boardService.createBoard(boardDto);
+		// Account가 존재하지 않음
+		if (createdBoardId == -1L) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		WebMvcLinkBuilder selfLinkBuilder = linkTo(BoardController.class).slash(createdBoardId);
+		URI selfUri = selfLinkBuilder.toUri();
+		return ResponseEntity.created(selfUri).body(boardDto);
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity updateBoard(@PathVariable Long id,
-		@RequestBody @Valid Board board, Errors errors) {
+	@PutMapping("/{boardId}")
+	public ResponseEntity updateBoard(@PathVariable Long boardId,
+		@RequestBody @Valid BoardDto boardDto, Errors errors) {
 
 		if (errors.hasErrors()) {
 			return ResponseEntity.badRequest().build();
 		}
 
-		boolean isComplete = boardService.updateBoard(board, id);
-		return isComplete ? ResponseEntity.ok(board) : ResponseEntity.notFound().build();
+		boolean isComplete = boardService.updateBoard(boardDto, boardId);
+		return isComplete ? ResponseEntity.ok(boardDto) : ResponseEntity.notFound().build();
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity deleteBorad(@PathVariable Long id) {
-		boolean isComplete = boardService.deleteBoard(id);
+	@DeleteMapping("/{boardId}")
+	public ResponseEntity deleteBorad(@PathVariable Long boardId) {
+		boolean isComplete = boardService.deleteBoard(boardId);
 		return isComplete ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
 	}
 }

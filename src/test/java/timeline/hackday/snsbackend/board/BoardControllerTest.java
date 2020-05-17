@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -17,38 +18,45 @@ import timeline.hackday.snsbackend.common.TestDescription;
 
 public class BoardControllerTest extends BaseControllerTest {
 
+	@Autowired
+	BoardService boardService;
+
 	@Test
 	@TestDescription("정상적으로 게시물 생성하는 테스트")
 	public void createBoard_Is_Ok() throws Exception {
+		// Given
 		Account savedAccount = getAccount();
 
-		Board board = getBoard(savedAccount);
+		BoardDto boardDto = getBoard(savedAccount);
 
+		// When & Then
 		mockMvc.perform(post("/api/board")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(board)))
+			.content(objectMapper.writeValueAsString(boardDto)))
 			.andDo(print())
 			.andExpect(status().isCreated())
 			.andExpect(header().exists(HttpHeaders.LOCATION))
-			.andExpect(jsonPath("title").value(board.getTitle()))
-			.andExpect(jsonPath("content").value(board.getContent()))
-			.andExpect(jsonPath("account.username").value(board.getAccount().getUsername()))
+			.andExpect(jsonPath("title").value(boardDto.getTitle()))
+			.andExpect(jsonPath("content").value(boardDto.getContent()))
+			.andExpect(jsonPath("accountId").value(boardDto.getAccountId()))
 			.andDo(document("create-board"));
 	}
 
 	@Test
 	@TestDescription("필수 입력 값을 빼먹어 예외가 발생하는 테스트")
 	public void createBoard_Bad_Request() throws Exception {
+		// Given
 		Account savedAccount = getAccount();
 
-		Board board = getBoard(savedAccount);
-		board.setContent(null);
+		BoardDto boardDto = getBoard(savedAccount);
+		boardDto.setContent(null);
 
+		// When & Then
 		mockMvc.perform(post("/api/board")
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(board)))
+			.content(objectMapper.writeValueAsString(boardDto)))
 			.andDo(print())
 			.andExpect(status().isBadRequest());
 	}
@@ -56,32 +64,36 @@ public class BoardControllerTest extends BaseControllerTest {
 	@Test
 	@TestDescription("이벤트를 정상적으로 수정하는 테스트")
 	public void updateBoard_Is_Ok() throws Exception {
+		// Given
 		Account savedAccount = getAccount();
 
-		Board savedBoard = boardRepository.save(getBoard(savedAccount));
-		savedBoard.setContent("content changed!");
+		BoardDto boardDto = getBoard(savedAccount);
+		Board savedBoard = boardRepository.save(boardService.mapToBoard(boardDto).get());
+		boardDto.setContent("content changed!");
 
+		// When & Then
 		mockMvc.perform(put("/api/board/{id}", savedBoard.getId())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(savedBoard)))
+			.content(objectMapper.writeValueAsString(boardDto)))
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("content").value(savedBoard.getContent()))
+			.andExpect(jsonPath("content").value(boardDto.getContent()))
 			.andDo(document("update-board"));
 	}
 
 	@Test
 	@TestDescription("이벤트를 정상적으로 삭제하는 테스트")
 	public void deleteBoard_Is_Ok() throws Exception {
+		// Given
 		Account savedAccount = getAccount();
 
-		Board savedBoard = boardRepository.save(getBoard(savedAccount));
+		BoardDto boardDto = getBoard(savedAccount);
+		Board savedBoard = boardRepository.save(boardService.mapToBoard(boardDto).get());
 
+		// When & Then
 		mockMvc.perform(delete("/api/board/{id}", savedBoard.getId())
-			.contentType(MediaType.APPLICATION_JSON)
-			.accept(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(savedBoard)))
+			.accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andDo(document("delete-board"));
@@ -90,24 +102,25 @@ public class BoardControllerTest extends BaseControllerTest {
 	@Test
 	@TestDescription("존재하지 않는 이벤트 삭제를 시도해 예외가 발생하는 테스트")
 	public void deleteBoard_Not_Found() throws Exception {
+		// Given
 		Account savedAccount = getAccount();
 
-		Board savedBoard = boardRepository.save(getBoard(savedAccount));
+		BoardDto boardDto = getBoard(savedAccount);
+		Board savedBoard = boardRepository.save(boardService.mapToBoard(boardDto).get());
 
+		// When & Then
 		mockMvc.perform(delete("/api/board/7777")
-			.contentType(MediaType.APPLICATION_JSON)
-			.accept(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(savedBoard)))
+			.accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isNotFound());
 	}
 
-	private Board getBoard(Account savedAccount) {
-		return Board.builder()
+	private BoardDto getBoard(Account savedAccount) {
+		return BoardDto.builder()
 			.title("test title")
 			.content("test content")
 			.createTime(LocalDateTime.now())
-			.account(savedAccount)
+			.accountId(savedAccount.getId())
 			.build();
 	}
 

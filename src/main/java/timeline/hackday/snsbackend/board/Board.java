@@ -7,8 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,17 +27,14 @@ public class Board {
 	@GeneratedValue
 	private Long id;
 
-	@NotEmpty
 	private String title;
 
 	@Lob
-	@NotEmpty
 	private String content;
 
-	@NotNull
 	private LocalDateTime createTime;
 
 	@ManyToOne
-	@NotNull
 	private Account account;
+
 }
