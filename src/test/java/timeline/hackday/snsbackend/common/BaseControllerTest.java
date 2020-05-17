@@ -53,18 +53,11 @@ public class BaseControllerTest {
 			.build();
 	}
 
-	protected Account getAccountSaved(String username, String password) {
+	protected Account getSavedAccount(String username, String password) {
 		Account account = new Account();
 		account.setUsername(username);
 		account.setPassword(password);
 		return accountRepository.save(account);
-	}
-
-	protected void createAccount(int i) {
-		Account account = new Account();
-		account.setUsername("user" + i);
-		account.setPassword("$$$$");
-		accountRepository.save(account);
 	}
 
 }

@@ -23,8 +23,8 @@ public class FollowControllerTest extends BaseControllerTest {
 	@TestDescription("정상적으로 follow 관계를 생성하는 테스트")
 	public void createFollow_Is_Ok() throws Exception {
 		// Given
-		Account savedAccount1 = getAccountSaved("hongchan", "B31$#23D21$&");
-		Account savedAccount2 = getAccountSaved("jiyun", "B31$#23D21$&");
+		Account savedAccount1 = getSavedAccount("hongchan", "B31$#23D21$&");
+		Account savedAccount2 = getSavedAccount("jiyun", "B31$#23D21$&");
 
 		FollowDto followDto = new FollowDto();
 		followDto.setSrcId(savedAccount1.getId());
@@ -45,7 +45,7 @@ public class FollowControllerTest extends BaseControllerTest {
 	@TestDescription("존재하지 않는 유저를 구독해, follow 관계 생성시 예외가 발생하는 테스트")
 	public void createFollow_Bad_Request() throws Exception {
 		// Given
-		Account savedAccount1 = getAccountSaved("hongchan", "B31$#23D21$&");
+		Account savedAccount1 = getSavedAccount("hongchan", "B31$#23D21$&");
 
 		FollowDto followDto = new FollowDto();
 		followDto.setSrcId(savedAccount1.getId());
@@ -64,10 +64,10 @@ public class FollowControllerTest extends BaseControllerTest {
 	@TestDescription("40개의 following을 10개씩 첫 번쩨 페이지 조회하는 테스트")
 	public void getFollowingList_Is_Ok() throws Exception {
 		// Given (user1은 user2 ~ user39 까지 follow)
-		Account user1 = getAccountSaved("user1", "$$$$");
+		Account user1 = getSavedAccount("user1", "$$$$");
 
 		IntStream.range(2, 40).forEach(i -> {
-			Account savedAccount = getAccountSaved("user" + i, "$$$$");
+			Account savedAccount = getSavedAccount("user" + i, "$$$$");
 
 			Follow follow = new Follow();
 			follow.setSrc(user1);
@@ -91,10 +91,10 @@ public class FollowControllerTest extends BaseControllerTest {
 	@TestDescription("40개의 following을 10개씩 첫 번쩨 페이지 조회하는 테스트")
 	public void getFollowerList_Is_Ok() throws Exception {
 		// Given (user2 ~ user39 는 user1을 follow)
-		Account user1 = getAccountSaved("user1", "$$$$");
+		Account user1 = getSavedAccount("user1", "$$$$");
 
 		IntStream.range(2, 40).forEach(i -> {
-			Account savedAccount = getAccountSaved("user" + i, "$$$$");
+			Account savedAccount = getSavedAccount("user" + i, "$$$$");
 
 			Follow follow = new Follow();
 			follow.setSrc(savedAccount);
@@ -118,8 +118,8 @@ public class FollowControllerTest extends BaseControllerTest {
 	@TestDescription("정상적으로 follow 관계를 삭제하는 테스트")
 	public void deleteFollow_Is_Ok() throws Exception {
 		// Given
-		Account savedAccount1 = getAccountSaved("hongchan", "B31$#23D21$&");
-		Account savedAccount2 = getAccountSaved("jiyun", "B31$#23D21$&");
+		Account savedAccount1 = getSavedAccount("hongchan", "B31$#23D21$&");
+		Account savedAccount2 = getSavedAccount("jiyun", "B31$#23D21$&");
 
 		FollowDto followDto = new FollowDto();
 		followDto.setSrcId(savedAccount1.getId());
@@ -139,8 +139,8 @@ public class FollowControllerTest extends BaseControllerTest {
 	@TestDescription("존재하지 않는 follow 관계를 삭제해 예외가 발생하는 테스트")
 	public void deleteFollow_Not_Found() throws Exception {
 		// Given
-		Account savedAccount1 = getAccountSaved("hongchan", "B31$#23D21$&");
-		Account savedAccount2 = getAccountSaved("jiyun", "B31$#23D21$&");
+		Account savedAccount1 = getSavedAccount("hongchan", "B31$#23D21$&");
+		Account savedAccount2 = getSavedAccount("jiyun", "B31$#23D21$&");
 
 		FollowDto followDto = new FollowDto();
 		followDto.setSrcId(savedAccount1.getId());

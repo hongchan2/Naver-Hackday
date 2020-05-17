@@ -25,7 +25,7 @@ public class BoardControllerTest extends BaseControllerTest {
 	@TestDescription("정상적으로 게시물 생성하는 테스트")
 	public void createBoard_Is_Ok() throws Exception {
 		// Given
-		Account savedAccount = getAccountSaved("hongchan", "B31$#23D21$&");
+		Account savedAccount = getSavedAccount("hongchan", "B31$#23D21$&");
 
 		BoardDto boardDto = getBoard(savedAccount);
 
@@ -57,7 +57,7 @@ public class BoardControllerTest extends BaseControllerTest {
 	@TestDescription("필수 입력 값을 빼먹어 예외가 발생하는 테스트")
 	public void createBoard_Bad_Request() throws Exception {
 		// Given
-		Account savedAccount = getAccountSaved("hongchan", "B31$#23D21$&");
+		Account savedAccount = getSavedAccount("hongchan", "B31$#23D21$&");
 
 		BoardDto boardDto = getBoard(savedAccount);
 		boardDto.setContent(null);
@@ -75,7 +75,7 @@ public class BoardControllerTest extends BaseControllerTest {
 	@TestDescription("이벤트를 정상적으로 수정하는 테스트")
 	public void updateBoard_Is_Ok() throws Exception {
 		// Given
-		Account savedAccount = getAccountSaved("hongchan", "B31$#23D21$&");
+		Account savedAccount = getSavedAccount("hongchan", "B31$#23D21$&");
 
 		BoardDto boardDto = getBoard(savedAccount);
 		Board savedBoard = boardRepository.save(boardService.mapToBoard(boardDto).get());
@@ -96,7 +96,7 @@ public class BoardControllerTest extends BaseControllerTest {
 	@TestDescription("이벤트를 정상적으로 삭제하는 테스트")
 	public void deleteBoard_Is_Ok() throws Exception {
 		// Given
-		Account savedAccount = getAccountSaved("hongchan", "B31$#23D21$&");
+		Account savedAccount = getSavedAccount("hongchan", "B31$#23D21$&");
 
 		BoardDto boardDto = getBoard(savedAccount);
 		Board savedBoard = boardRepository.save(boardService.mapToBoard(boardDto).get());
@@ -113,7 +113,7 @@ public class BoardControllerTest extends BaseControllerTest {
 	@TestDescription("존재하지 않는 이벤트 삭제를 시도해 예외가 발생하는 테스트")
 	public void deleteBoard_Not_Found() throws Exception {
 		// Given
-		Account savedAccount = getAccountSaved("hongchan", "B31$#23D21$&");
+		Account savedAccount = getSavedAccount("hongchan", "B31$#23D21$&");
 
 		BoardDto boardDto = getBoard(savedAccount);
 		Board savedBoard = boardRepository.save(boardService.mapToBoard(boardDto).get());
