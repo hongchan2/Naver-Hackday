@@ -1,5 +1,8 @@
 package timeline.hackday.snsbackend.follow;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -9,6 +12,7 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import timeline.hackday.snsbackend.account.Account;
 import timeline.hackday.snsbackend.common.BaseControllerTest;
@@ -38,7 +42,13 @@ public class FollowControllerTest extends BaseControllerTest {
 			.andDo(print())
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("srcId").value(followDto.getSrcId()))
-			.andExpect(jsonPath("destId").value(followDto.getDestId()));
+			.andExpect(jsonPath("destId").value(followDto.getDestId()))
+			.andDo(document("create-follow",
+				requestFields(
+					fieldWithPath("srcId").description("팔로우 신청하는 유저 ID"),
+					fieldWithPath("destId").description("팔로우 대상자의 ID")
+				)
+			));
 	}
 
 	@Test
@@ -61,7 +71,7 @@ public class FollowControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	@TestDescription("40개의 following을 10개씩 첫 번쩨 페이지 조회하는 테스트")
+	@TestDescription("40개의 following을 5개씩 첫 번쩨 페이지 조회하는 테스트")
 	public void getFollowingList_Is_Ok() throws Exception {
 		// Given (user1은 user2 ~ user39 까지 follow)
 		Account user1 = getSavedAccount("user1", "$$$$");
@@ -76,19 +86,29 @@ public class FollowControllerTest extends BaseControllerTest {
 		});
 
 		// When & Then
-		mockMvc.perform(get("/api/following/{id}", user1.getId())
+		mockMvc.perform(RestDocumentationRequestBuilders.get("/api/following/{id}", user1.getId())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
 			.param("page", "0")
-			.param("size", "10")
+			.param("size", "5")
 			.param("sort", "dest_Id,ASC"))
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("content[0].dest_Username").value("user2"));
+			.andExpect(jsonPath("content[0].dest_Username").value("user2"))
+			.andDo(document("get-following-list",
+				pathParameters(
+					parameterWithName("id").description("조회할 사용자의 ID")
+				),
+				requestParameters(
+					parameterWithName("page").description("요청할 페이지"),
+					parameterWithName("size").description("요청할 페이지 크기"),
+					parameterWithName("sort").description("페이징에 적용할 정렬 기준")
+				)
+			));
 	}
 
 	@Test
-	@TestDescription("40개의 following을 10개씩 첫 번쩨 페이지 조회하는 테스트")
+	@TestDescription("40개의 following을 5개씩 첫 번쩨 페이지 조회하는 테스트")
 	public void getFollowerList_Is_Ok() throws Exception {
 		// Given (user2 ~ user39 는 user1을 follow)
 		Account user1 = getSavedAccount("user1", "$$$$");
@@ -103,15 +123,25 @@ public class FollowControllerTest extends BaseControllerTest {
 		});
 
 		// When & Then
-		mockMvc.perform(get("/api/follower/{id}", user1.getId())
+		mockMvc.perform(RestDocumentationRequestBuilders.get("/api/follower/{id}", user1.getId())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
 			.param("page", "0")
-			.param("size", "10")
+			.param("size", "5")
 			.param("sort", "src_Id,ASC"))
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("content[0].src_Username").value("user2"));
+			.andExpect(jsonPath("content[0].src_Username").value("user2"))
+			.andDo(document("get-follower-list",
+				pathParameters(
+					parameterWithName("id").description("조회할 사용자의 ID")
+				),
+				requestParameters(
+					parameterWithName("page").description("요청할 페이지"),
+					parameterWithName("size").description("요청할 페이지 크기"),
+					parameterWithName("sort").description("페이징에 적용할 정렬 기준")
+				)
+			));
 	}
 
 	@Test
@@ -128,11 +158,18 @@ public class FollowControllerTest extends BaseControllerTest {
 		followService.follow(followDto);
 
 		// When & Then
-		mockMvc.perform(delete("/api/follow/{srcId}/{destId}", followDto.getSrcId(), followDto.getDestId())
+		mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/follow/{srcId}/{destId}", followDto.getSrcId(),
+			followDto.getDestId())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andDo(print())
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andDo(document("delete-follow",
+				pathParameters(
+					parameterWithName("srcId").description("언팔로우 신청하는 유저의 ID"),
+					parameterWithName("destId").description("언팔로우 대상자의 ID")
+				)
+			));
 	}
 
 	@Test
