@@ -4,6 +4,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -56,6 +59,25 @@ public class FollowControllerTest extends BaseControllerTest {
 			.content(objectMapper.writeValueAsString(followDto)))
 			.andDo(print())
 			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@TestDescription("40개의 following을 10개씩 두 번쩨 페이지 조회하는 테스트")
+	public void getFollowingList_Is_Ok() throws Exception {
+		// Given
+		IntStream.range(1, 100).forEach(this::createAccount);
+		LongStream.range(2, 40).forEach(this::createFollow);
+
+		// When & Then
+		mockMvc.perform(get("/api/following/1")
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.param("page", "0")
+			.param("size", "10")
+			.param("sort", "dest_Id,ASC"))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("content[0].dest_Username").value("user2"));
 	}
 
 	@Test
