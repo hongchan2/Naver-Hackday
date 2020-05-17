@@ -1,5 +1,6 @@
 package timeline.hackday.snsbackend.board;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -7,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 
 import org.junit.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import timeline.hackday.snsbackend.account.Account;
@@ -27,10 +29,12 @@ public class BoardControllerTest extends BaseControllerTest {
 			.accept(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(board)))
 			.andDo(print())
-			.andExpect(status().isOk())
+			.andExpect(status().isCreated())
+			.andExpect(header().exists(HttpHeaders.LOCATION))
 			.andExpect(jsonPath("title").value(board.getTitle()))
 			.andExpect(jsonPath("content").value(board.getContent()))
-			.andExpect(jsonPath("account.username").value(board.getAccount().getUsername()));
+			.andExpect(jsonPath("account.username").value(board.getAccount().getUsername()))
+			.andDo(document("create-board"));
 	}
 
 	@Test
@@ -63,7 +67,8 @@ public class BoardControllerTest extends BaseControllerTest {
 			.content(objectMapper.writeValueAsString(savedBoard)))
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("content").value(savedBoard.getContent()));
+			.andExpect(jsonPath("content").value(savedBoard.getContent()))
+			.andDo(document("update-board"));
 	}
 
 	@Test
@@ -78,7 +83,8 @@ public class BoardControllerTest extends BaseControllerTest {
 			.accept(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(savedBoard)))
 			.andDo(print())
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andDo(document("delete-board"));
 	}
 
 	@Test
@@ -108,7 +114,7 @@ public class BoardControllerTest extends BaseControllerTest {
 	private Account getAccount() {
 		Account account = new Account();
 		account.setUsername("hongchan");
-		account.setPassword("1234");
+		account.setPassword("B31$#23D21$&");
 		return accountRepository.save(account);
 	}
 }
