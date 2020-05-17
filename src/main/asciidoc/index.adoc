@@ -46,7 +46,7 @@
 
 `POST` 요청을 사용해서 새 게시물을 만들 수 있다.
 
-operation::create-board[snippets='http-request,http-response']
+operation::create-board[snippets='http-request,request-fields,http-response,response-headers']
 
 [[resources-board-update]]
 === 이벤트 수정

@@ -1,6 +1,8 @@
 package timeline.hackday.snsbackend.board;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -40,7 +42,17 @@ public class BoardControllerTest extends BaseControllerTest {
 			.andExpect(jsonPath("title").value(boardDto.getTitle()))
 			.andExpect(jsonPath("content").value(boardDto.getContent()))
 			.andExpect(jsonPath("accountId").value(boardDto.getAccountId()))
-			.andDo(document("create-board"));
+			.andDo(document("create-board",
+				requestFields(
+					fieldWithPath("title").description("게시물의 제목"),
+					fieldWithPath("content").description("게시물의 내용"),
+					fieldWithPath("createTime").description("게시물의 작성 시간 (LocalDateTime)"),
+					fieldWithPath("accountId").description("게시물의 작성자 ID")
+				),
+				responseHeaders(
+					headerWithName(HttpHeaders.LOCATION).description("새로 생성된 게시물 URL")
+				)
+			));
 	}
 
 	@Test
