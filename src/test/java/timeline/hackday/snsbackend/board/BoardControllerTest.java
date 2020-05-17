@@ -66,6 +66,36 @@ public class BoardControllerTest extends BaseControllerTest {
 			.andExpect(jsonPath("content").value(savedBoard.getContent()));
 	}
 
+	@Test
+	@TestDescription("이벤트를 정상적으로 삭제하는 테스트")
+	public void deleteBoard_Is_Ok() throws Exception {
+		Account savedAccount = getAccount();
+
+		Board savedBoard = boardRepository.save(getBoard(savedAccount));
+
+		mockMvc.perform(delete("/api/board/{id}", savedBoard.getId())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(savedBoard)))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	@TestDescription("존재하지 않는 이벤트 삭제를 시도해 예외가 발생하는 테스트")
+	public void deleteBoard_Not_Found() throws Exception {
+		Account savedAccount = getAccount();
+
+		Board savedBoard = boardRepository.save(getBoard(savedAccount));
+
+		mockMvc.perform(delete("/api/board/7777")
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(savedBoard)))
+			.andDo(print())
+			.andExpect(status().isNotFound());
+	}
+
 	private Board getBoard(Account savedAccount) {
 		return Board.builder()
 			.title("test title")
