@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,5 +41,11 @@ public class BoardController {
 
 		boolean isComplete = boardService.updateBoard(board, id);
 		return isComplete ? ResponseEntity.ok(board) : ResponseEntity.notFound().build();
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity deleteBorad(@PathVariable Long id) {
+		boolean isComplete = boardService.deleteBoard(id);
+		return isComplete ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
 	}
 }

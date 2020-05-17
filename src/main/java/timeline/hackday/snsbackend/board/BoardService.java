@@ -4,19 +4,13 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import timeline.hackday.snsbackend.account.AccountRepository;
-
 @Service
 public class BoardService {
 
 	private final BoardRepository boardRepository;
 
-	private final AccountRepository accountRepository;
-
-	public BoardService(BoardRepository boardRepository,
-		AccountRepository accountRepository) {
+	public BoardService(BoardRepository boardRepository) {
 		this.boardRepository = boardRepository;
-		this.accountRepository = accountRepository;
 	}
 
 	public void createBoard(Board board) {
@@ -30,9 +24,19 @@ public class BoardService {
 		}
 
 		Board existingBoard = optionalBoard.get();
-		System.out.println(existingBoard.getContent());
 		existingBoard.setTitle(board.getTitle());
 		existingBoard.setContent(board.getContent());
+		boardRepository.save(existingBoard);
+		return true;
+	}
+
+	public boolean deleteBoard(Long id) {
+		Optional<Board> optionalBoard = boardRepository.findById(id);
+		if (optionalBoard.isEmpty()) {
+			return false;
+		}
+
+		boardRepository.deleteById(id);
 		return true;
 	}
 }
