@@ -18,7 +18,6 @@ import timeline.hackday.snsbackend.account.Account;
 import timeline.hackday.snsbackend.account.AccountRepository;
 import timeline.hackday.snsbackend.board.BoardDto;
 import timeline.hackday.snsbackend.board.BoardRepository;
-import timeline.hackday.snsbackend.follow.Follow;
 import timeline.hackday.snsbackend.follow.FollowRepository;
 
 @RunWith(SpringRunner.class)
@@ -68,10 +67,4 @@ public class BaseControllerTest {
 		accountRepository.save(account);
 	}
 
-	public void createFollow(Long i) {
-		Follow follow = new Follow();
-		follow.setSrc(accountRepository.findById(1L).get());
-		follow.setDest(accountRepository.findById(i).get());
-		followRepository.save(follow);
-	}
 }

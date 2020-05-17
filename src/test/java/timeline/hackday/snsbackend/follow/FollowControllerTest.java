@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,14 +61,22 @@ public class FollowControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	@TestDescription("40개의 following을 10개씩 두 번쩨 페이지 조회하는 테스트")
+	@TestDescription("40개의 following을 10개씩 첫 번쩨 페이지 조회하는 테스트")
 	public void getFollowingList_Is_Ok() throws Exception {
-		// Given
-		IntStream.range(1, 100).forEach(this::createAccount);
-		LongStream.range(2, 40).forEach(this::createFollow);
+		// Given (user1은 user2 ~ user39 까지 follow)
+		Account user1 = getAccountSaved("user1", "$$$$");
+
+		IntStream.range(2, 40).forEach(i -> {
+			Account savedAccount = getAccountSaved("user" + i, "$$$$");
+
+			Follow follow = new Follow();
+			follow.setSrc(user1);
+			follow.setDest(savedAccount);
+			followRepository.save(follow);
+		});
 
 		// When & Then
-		mockMvc.perform(get("/api/following/1")
+		mockMvc.perform(get("/api/following/{id}", user1.getId())
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
 			.param("page", "0")
@@ -78,6 +85,33 @@ public class FollowControllerTest extends BaseControllerTest {
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("content[0].dest_Username").value("user2"));
+	}
+
+	@Test
+	@TestDescription("40개의 following을 10개씩 첫 번쩨 페이지 조회하는 테스트")
+	public void getFollowerList_Is_Ok() throws Exception {
+		// Given (user2 ~ user39 는 user1을 follow)
+		Account user1 = getAccountSaved("user1", "$$$$");
+
+		IntStream.range(2, 40).forEach(i -> {
+			Account savedAccount = getAccountSaved("user" + i, "$$$$");
+
+			Follow follow = new Follow();
+			follow.setSrc(savedAccount);
+			follow.setDest(user1);
+			followRepository.save(follow);
+		});
+
+		// When & Then
+		mockMvc.perform(get("/api/follower/{id}", user1.getId())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.param("page", "0")
+			.param("size", "10")
+			.param("sort", "src_Id,ASC"))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("content[0].src_Username").value("user2"));
 	}
 
 	@Test
