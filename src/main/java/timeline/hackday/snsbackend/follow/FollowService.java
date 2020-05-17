@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import timeline.hackday.snsbackend.account.Account;
 import timeline.hackday.snsbackend.account.AccountRepository;
+import timeline.hackday.snsbackend.follow.projection.FollowerSummary;
 import timeline.hackday.snsbackend.follow.projection.FollowingSummary;
 
 @Service
@@ -37,9 +38,16 @@ public class FollowService {
 		return true;
 	}
 
-	// projection을 사용해 join을 하여 두 번의 쿼리만 발생하도록 함 -> 1. {id, name}  2. total count
+	/*
+	 * projection을 사용해 join을 하여 두 번의 쿼리만 발생하도록 함
+	 * 1. {id, name}  2. total count
+	 */
 	public Page<FollowingSummary> getFollowingPage(Long srcId, Pageable pageable) {
 		return followRepository.findBySrc_Id(srcId, pageable);
+	}
+
+	public Page<FollowerSummary> getFollowerPage(Long destId, Pageable pageable) {
+		return followRepository.findByDest_Id(destId, pageable);
 	}
 
 	@Transactional

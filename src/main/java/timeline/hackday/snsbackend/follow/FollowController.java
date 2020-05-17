@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import timeline.hackday.snsbackend.follow.projection.FollowerSummary;
 import timeline.hackday.snsbackend.follow.projection.FollowingSummary;
 
 @Controller
@@ -42,6 +43,12 @@ public class FollowController {
 	@ResponseBody
 	public Page<FollowingSummary> getFollowingList(@PathVariable Long srcId, Pageable pageable) {
 		return followService.getFollowingPage(srcId, pageable);
+	}
+
+	@GetMapping("/follower/{destId}")
+	@ResponseBody
+	public Page<FollowerSummary> getFollowerList(@PathVariable Long destId, Pageable pageable) {
+		return followService.getFollowerPage(destId, pageable);
 	}
 
 	@DeleteMapping("/follow/{srcId}/{destId}")
