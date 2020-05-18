@@ -27,6 +27,15 @@ public class BoardService {
 			return -1L;
 		}
 
+		/*
+			TODO - Call batch service (팔로우하는 유저들의 타임라인에 게시물을 추가)
+			Request type
+			{
+			  "accountId": 0,
+			  "boardId": 0
+			}
+		 */
+
 		return boardRepository.save(optionalBoard.get()).getId();
 	}
 
