@@ -94,3 +94,15 @@ operation::get-follower-list[snippets='http-request,path-parameters,request-para
 `DELETE` 요청을 사용해서 기존 구독 관계를 삭제할 수 있다.
 
 operation::delete-follow[snippets='http-request,path-parameters,http-response']
+
+[[resources-timeline]]
+== 타임라인
+
+타임라인 리소스는 타임라인을 조회할 때 사용한다.
+
+[[resources-timeline-get]]
+=== 타임라인 조회
+
+`GET` 요청을 사용해서 특정 유저의 타임라인을 조회할 수 있다.
+
+operation::get-timeline-list[snippets='http-request,path-parameters,request-parameters,http-response']
