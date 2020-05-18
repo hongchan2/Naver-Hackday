@@ -35,6 +35,17 @@ public class FollowService {
 
 		Follow follow = mapToFollow(optionalSrcAccount.get(), optionalDestAccount.get());
 		followRepository.save(follow);
+
+		/*
+			TODO - Call batch service (팔로우하는 유저의 게시물을 타임라인에 추가)
+			Request type
+			{
+			  "dest_id": 0,
+			  "id": 0,
+			  "src_id": 0
+			}
+		 */
+
 		return true;
 	}
 
@@ -60,6 +71,16 @@ public class FollowService {
 		}
 
 		followRepository.deleteBySrc_IdAndDest_Id(srcId, destId);
+
+		/*
+			TODO - Call batch service (팔로우 취소하는 유저의 게시물을 타임라인에서 삭제)
+			Request type
+			{
+			  "dest_id": 0,
+			  "src_id": 0
+			}
+		 */
+
 		return true;
 	}
 
