@@ -62,7 +62,7 @@ public class FollowService {
 	}
 
 	@Transactional
-	// TODO Minimize Query
+	// TODO Optimize Query (Do Lazy Fetch)
 	public boolean unfollow(Long srcId, Long destId) {
 		Optional<Follow> optionalFollow = followRepository.findBySrc_IdAndDest_Id(srcId, destId);
 
@@ -70,8 +70,7 @@ public class FollowService {
 			return false;
 		}
 
-		followRepository.deleteBySrc_IdAndDest_Id(srcId, destId);
-
+		followRepository.deleteById(optionalFollow.get().getId());
 		/*
 			TODO - Call batch service (팔로우 취소하는 유저의 게시물을 타임라인에서 삭제)
 			Request type
