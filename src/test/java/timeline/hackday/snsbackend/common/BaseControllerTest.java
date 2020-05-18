@@ -18,6 +18,7 @@ import timeline.hackday.snsbackend.account.Account;
 import timeline.hackday.snsbackend.account.AccountRepository;
 import timeline.hackday.snsbackend.board.BoardDto;
 import timeline.hackday.snsbackend.board.BoardRepository;
+import timeline.hackday.snsbackend.board.BoardService;
 import timeline.hackday.snsbackend.follow.FollowRepository;
 
 @RunWith(SpringRunner.class)
@@ -43,6 +44,9 @@ public class BaseControllerTest {
 
 	@Autowired
 	protected FollowRepository followRepository;
+
+	@Autowired
+	protected BoardService boardService;
 
 	protected BoardDto getBoard(Account savedAccount) {
 		return BoardDto.builder()

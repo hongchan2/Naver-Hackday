@@ -13,8 +13,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
 	Optional<Follow> findBySrc_IdAndDest_Id(Long srcId, Long destId);
 
-	void deleteBySrc_IdAndDest_Id(Long srcId, Long destId);
-
 	Page<FollowingSummary> findBySrc_Id(Long srcId, Pageable pageable);
 
 	Page<FollowerSummary> findByDest_Id(Long destId, Pageable pageable);
