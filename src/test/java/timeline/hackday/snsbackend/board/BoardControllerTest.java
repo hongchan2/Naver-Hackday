@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -17,9 +16,6 @@ import timeline.hackday.snsbackend.common.BaseControllerTest;
 import timeline.hackday.snsbackend.common.TestDescription;
 
 public class BoardControllerTest extends BaseControllerTest {
-
-	@Autowired
-	BoardService boardService;
 
 	@Test
 	@TestDescription("정상적으로 게시물 생성하는 테스트")
