@@ -58,6 +58,10 @@ public class BoardService {
 			return false;
 		}
 
+		/*
+			TODO <Set cascade option> Or <Call batch service> (팔로우하는 유저들의 타임라인에 게시물을 삭제)
+		 */
+
 		boardRepository.deleteById(boardId);
 		return true;
 	}
