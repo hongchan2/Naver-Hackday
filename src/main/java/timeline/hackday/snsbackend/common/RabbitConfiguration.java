@@ -1,4 +1,4 @@
-package timeline.hackday.snsbackend.batch;
+package timeline.hackday.snsbackend.common;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
