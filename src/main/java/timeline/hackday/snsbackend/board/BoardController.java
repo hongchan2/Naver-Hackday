@@ -19,15 +19,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import timeline.hackday.snsbackend.batch.IBatchService;
-
 @Controller
 @RequestMapping(value = "/api/board", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BoardController {
 
 	@Autowired
 	BoardService boardService;
-	
 
 	@PostMapping
 	public ResponseEntity createBoard(@RequestBody @Valid BoardDto boardDto, Errors errors) {
@@ -40,8 +37,7 @@ public class BoardController {
 		if (createdBoardId == -1L) {
 			return ResponseEntity.badRequest().build();
 		}
-		 
-		
+
 		WebMvcLinkBuilder selfLinkBuilder = linkTo(BoardController.class).slash(createdBoardId);
 		URI selfUri = selfLinkBuilder.toUri();
 		return ResponseEntity.created(selfUri).body(boardDto);

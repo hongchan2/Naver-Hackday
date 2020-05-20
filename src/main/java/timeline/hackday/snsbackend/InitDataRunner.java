@@ -33,6 +33,10 @@ public class InitDataRunner implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
+		makeInitData();
+	}
+
+	private void makeInitData() {
 		// user1 ~ user1000 생성
 		IntStream.range(1, 1001).forEach(this::createAccount);
 		System.out.println("1) 유저 생성 완료");
@@ -54,10 +58,9 @@ public class InitDataRunner implements ApplicationRunner {
 
 		// user1 ~ user2는 10개의 게시물을 추가로 생성
 		IntStream.range(1, 3).forEach(i ->
-			IntStream.range(1, 10).forEach(j -> this.createBoard(i))
+			IntStream.range(1, 11).forEach(j -> this.createBoard(i))
 		);
 		System.out.println("4) 게시물 추가 생성 완료");
-
 	}
 
 	private void createAccount(int i) {
