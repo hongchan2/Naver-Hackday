@@ -2,10 +2,12 @@ package timeline.hackday.snsbackend.board;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import timeline.hackday.snsbackend.account.Account;
 import timeline.hackday.snsbackend.account.AccountRepository;
+import timeline.hackday.snsbackend.batch.IBatchService;
 
 @Service
 public class BoardService {
@@ -13,6 +15,9 @@ public class BoardService {
 	private final BoardRepository boardRepository;
 
 	private final AccountRepository accountRepository;
+	
+	@Autowired
+	private IBatchService batchService;
 
 	public BoardService(BoardRepository boardRepository,
 		AccountRepository accountRepository) {
@@ -35,8 +40,9 @@ public class BoardService {
 			  "boardId": 0
 			}
 		 */
-
-		return boardRepository.save(optionalBoard.get()).getId();
+		Board board = boardRepository.save(optionalBoard.get());
+		batchService.addTimelinesToFollowee(board.getId(), board.getAccount().getId());
+		return board.getId();
 	}
 
 	public boolean updateBoard(BoardDto boardDto, Long boardId) {
