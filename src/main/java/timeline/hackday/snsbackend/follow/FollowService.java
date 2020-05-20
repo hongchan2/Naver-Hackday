@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import timeline.hackday.snsbackend.account.Account;
 import timeline.hackday.snsbackend.account.AccountRepository;
+import timeline.hackday.snsbackend.batch.IBatchService;
 import timeline.hackday.snsbackend.follow.projection.FollowerSummary;
 import timeline.hackday.snsbackend.follow.projection.FollowingSummary;
 
@@ -19,10 +20,13 @@ public class FollowService {
 
 	private final AccountRepository accountRepository;
 
+	private final IBatchService batchService;
+
 	public FollowService(FollowRepository followRepository,
-		AccountRepository accountRepository) {
+		AccountRepository accountRepository, IBatchService batchService) {
 		this.followRepository = followRepository;
 		this.accountRepository = accountRepository;
+		this.batchService = batchService;
 	}
 
 	public boolean follow(FollowDto followDto) {
@@ -36,15 +40,8 @@ public class FollowService {
 		Follow follow = mapToFollow(optionalSrcAccount.get(), optionalDestAccount.get());
 		followRepository.save(follow);
 
-		/*
-			TODO - Call batch service (팔로우하는 유저의 게시물을 타임라인에 추가)
-			Request type
-			{
-			  "dest_id": 0,
-			  "id": 0,
-			  "src_id": 0
-			}
-		 */
+		// Request to batch service (팔로우하는 유저의 게시물을 타임라인에 추가)
+		batchService.addTimelinesToFollower(followDto.getSrcId(), followDto.getDestId());
 
 		return true;
 	}
@@ -71,14 +68,9 @@ public class FollowService {
 		}
 
 		followRepository.deleteById(optionalFollow.get().getId());
-		/*
-			TODO - Call batch service (팔로우 취소하는 유저의 게시물을 타임라인에서 삭제)
-			Request type
-			{
-			  "dest_id": 0,
-			  "src_id": 0
-			}
-		 */
+
+		// Request to batch service (팔로우 취소하는 유저의 게시물을 타임라인에서 삭제)
+		batchService.removeTimelinesToFollower(srcId, destId);
 
 		return true;
 	}
