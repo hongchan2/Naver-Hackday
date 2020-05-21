@@ -47,6 +47,9 @@ public class InitDataRunner implements ApplicationRunner {
 		);
 		System.out.println("2) 게시물 생성 완료");
 
+		// user3 은 게시물 300개를 가짐
+		IntStream.range(1, 301).forEach(j -> this.createBoard(3));
+
 		/*
 			user11 ~ user1000 이 user1 ~ user 2을 follow
 			-> user1 ~ user2은 990명을 팔로워를 가짐

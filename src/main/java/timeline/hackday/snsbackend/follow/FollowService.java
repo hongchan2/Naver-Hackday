@@ -99,7 +99,7 @@ public class FollowService {
 		long boardCnt = boardRepository.countByAccount_Id(destId);
 		if (boardCnt < 200L) {
 			// 실시간 처리
-			timelineRepository.deleteByBoard_Account_Id(destId);
+			timelineRepository.deleteByAccount_IdAndBoard_Account_Id(srcId, destId);
 		} else {
 			// Request to batch service
 			batchService.removeTimelinesToFollower(srcId, destId);

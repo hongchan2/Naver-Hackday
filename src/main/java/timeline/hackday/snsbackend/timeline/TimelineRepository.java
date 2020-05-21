@@ -10,7 +10,7 @@ public interface TimelineRepository extends JpaRepository<Timeline, Long> {
 
 	Page<TimelineSummary> findByAccount_Id(Long accountId, Pageable pageable);
 
-	void deleteByBoard_Account_Id(Long id);
+	void deleteByAccount_IdAndBoard_Account_Id(Long srcId, Long destId);
 
 	// To do test
 	long countByAccount_Id(Long accountId);
