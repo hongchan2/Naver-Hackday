@@ -33,7 +33,7 @@ public class InitDataRunner implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		makeInitData();
+		// makeInitData();
 	}
 
 	private void makeInitData() {
