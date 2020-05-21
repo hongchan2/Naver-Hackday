@@ -1,5 +1,6 @@
 package timeline.hackday.snsbackend.follow;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -15,20 +16,30 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import timeline.hackday.snsbackend.account.Account;
+import timeline.hackday.snsbackend.board.BoardDto;
 import timeline.hackday.snsbackend.common.BaseControllerTest;
 import timeline.hackday.snsbackend.common.TestDescription;
+import timeline.hackday.snsbackend.timeline.TimelineRepository;
 
 public class FollowControllerTest extends BaseControllerTest {
 
 	@Autowired
 	FollowService followService;
 
+	@Autowired
+	TimelineRepository timelineRepository;
+
 	@Test
-	@TestDescription("정상적으로 follow 관계를 생성하는 테스트")
+	@TestDescription("정상적으로 follow 관계를 생성하고 타임라인에 추가하는 테스트")
 	public void createFollow_Is_Ok() throws Exception {
 		// Given
 		Account savedAccount1 = getSavedAccount("hongchan", "B31$#23D21$&");
 		Account savedAccount2 = getSavedAccount("jiyun", "B31$#23D21$&");
+
+		BoardDto boardDto1 = getBoard(savedAccount2);
+		BoardDto boardDto2 = getBoard(savedAccount2);
+		boardRepository.save(boardService.mapToBoard(boardDto1).get());
+		boardRepository.save(boardService.mapToBoard(boardDto2).get());
 
 		FollowDto followDto = new FollowDto();
 		followDto.setSrcId(savedAccount1.getId());
@@ -49,6 +60,8 @@ public class FollowControllerTest extends BaseControllerTest {
 					fieldWithPath("destId").description("팔로우 대상자의 ID")
 				)
 			));
+
+		assertThat(timelineRepository.countByAccount_Id(savedAccount1.getId())).isEqualTo(2);
 	}
 
 	@Test
@@ -145,11 +158,16 @@ public class FollowControllerTest extends BaseControllerTest {
 	}
 
 	@Test
-	@TestDescription("정상적으로 follow 관계를 삭제하는 테스트")
+	@TestDescription("정상적으로 follow 관계를 삭제하고 타임라인에서 제거하는 테스트")
 	public void deleteFollow_Is_Ok() throws Exception {
 		// Given
 		Account savedAccount1 = getSavedAccount("hongchan", "B31$#23D21$&");
 		Account savedAccount2 = getSavedAccount("jiyun", "B31$#23D21$&");
+
+		BoardDto boardDto1 = getBoard(savedAccount2);
+		BoardDto boardDto2 = getBoard(savedAccount2);
+		boardRepository.save(boardService.mapToBoard(boardDto1).get());
+		boardRepository.save(boardService.mapToBoard(boardDto2).get());
 
 		FollowDto followDto = new FollowDto();
 		followDto.setSrcId(savedAccount1.getId());
@@ -170,6 +188,8 @@ public class FollowControllerTest extends BaseControllerTest {
 					parameterWithName("destId").description("언팔로우 대상자의 ID")
 				)
 			));
+
+		assertThat(timelineRepository.countByAccount_Id(savedAccount1.getId())).isEqualTo(0);
 	}
 
 	@Test
