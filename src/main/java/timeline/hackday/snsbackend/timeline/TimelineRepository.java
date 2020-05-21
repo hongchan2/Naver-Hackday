@@ -9,4 +9,10 @@ import timeline.hackday.snsbackend.timeline.projection.TimelineSummary;
 public interface TimelineRepository extends JpaRepository<Timeline, Long> {
 
 	Page<TimelineSummary> findByAccount_Id(Long accountId, Pageable pageable);
+
+	void deleteByBoard_Account_Id(Long id);
+
+	// To do test
+	long countByAccount_Id(Long accountId);
+
 }
