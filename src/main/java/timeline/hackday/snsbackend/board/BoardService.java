@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import timeline.hackday.snsbackend.account.Account;
 import timeline.hackday.snsbackend.account.AccountRepository;
+import timeline.hackday.snsbackend.batch.IBatchService;
 
 @Service
 public class BoardService {
@@ -14,10 +15,13 @@ public class BoardService {
 
 	private final AccountRepository accountRepository;
 
+	private final IBatchService batchService;
+
 	public BoardService(BoardRepository boardRepository,
-		AccountRepository accountRepository) {
+		AccountRepository accountRepository, IBatchService batchService) {
 		this.boardRepository = boardRepository;
 		this.accountRepository = accountRepository;
+		this.batchService = batchService;
 	}
 
 	public Long createBoard(BoardDto boardDto) {
@@ -27,16 +31,12 @@ public class BoardService {
 			return -1L;
 		}
 
-		/*
-			TODO - Call batch service (팔로우하는 유저들의 타임라인에 게시물을 추가)
-			Request type
-			{
-			  "accountId": 0,
-			  "boardId": 0
-			}
-		 */
+		Board board = boardRepository.save(optionalBoard.get());
+		Long boardId = board.getId();
 
-		return boardRepository.save(optionalBoard.get()).getId();
+		// Request to batch service (팔로우하는 유저들의 타임라인에 게시물을 추가)
+		batchService.addTimelinesToFollowee(boardId, board.getAccount().getId());
+		return boardId;
 	}
 
 	public boolean updateBoard(BoardDto boardDto, Long boardId) {
@@ -58,7 +58,15 @@ public class BoardService {
 			return false;
 		}
 
-		boardRepository.deleteById(boardId);
+		Board board = optionalBoard.get();
+		boardRepository.deleteById(board.getId());
+
+		/*
+			Request to batch service (팔로우하는 유저들의 타임라인에 게시물을 삭제)
+			TODO - Set cascade option 고려해보기
+		 */
+		batchService.removeTimelinesToFollowee(board.getId(), board.getAccount().getId());
+
 		return true;
 	}
 
