@@ -58,13 +58,11 @@ public class BoardService {
 			return false;
 		}
 
-		Board board = optionalBoard.get();
-		boardRepository.deleteById(board.getId());
-
 		/*
 			Request to batch service (팔로우하는 유저들의 타임라인에 게시물을 삭제)
 			TODO - Set cascade option 고려해보기
 		 */
+		Board board = optionalBoard.get();
 		batchService.removeTimelinesToFollowee(board.getId(), board.getAccount().getId());
 
 		return true;
