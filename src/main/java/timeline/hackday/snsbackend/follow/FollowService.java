@@ -43,10 +43,21 @@ public class FollowService {
 
 	@Transactional
 	public boolean follow(FollowDto followDto) {
-		Optional<Account> optionalSrcAccount = accountRepository.findById(followDto.getSrcId());
-		Optional<Account> optionalDestAccount = accountRepository.findById(followDto.getDestId());
+		Long srcId = followDto.getSrcId();
+		Long destId = followDto.getDestId();
 
+		Optional<Account> optionalSrcAccount = accountRepository.findById(srcId);
+		Optional<Account> optionalDestAccount = accountRepository.findById(destId);
 		if (optionalSrcAccount.isEmpty() || optionalDestAccount.isEmpty()) {
+			return false;
+		}
+
+		/*
+			랩업 미팅 후 지적받은 사항으로, 이미 팔로우 관계가 존재하는 지 검사하는 로직 추가!
+			API 설계할 때는 모든 것을 고려해야 함! (프론트에서 검증해주겠지 x, 보안 공격...등)
+		 */
+		Optional<Follow> optionalFollow = followRepository.findBySrc_IdAndDest_Id(srcId, destId);
+		if (optionalFollow.isPresent()) {
 			return false;
 		}
 
@@ -54,10 +65,10 @@ public class FollowService {
 		followRepository.save(follow);
 
 		// 팔로우하는 유저(dest)의 게시물을 src 유저의 타임라인에 추가
-		long boardCnt = boardRepository.countByAccount_Id(followDto.getDestId());
+		long boardCnt = boardRepository.countByAccount_Id(destId);
 		if (boardCnt < 200L) {
 			// 실시간 처리
-			List<Board> boardList = boardRepository.findByAccount_Id(followDto.getDestId());
+			List<Board> boardList = boardRepository.findByAccount_Id(destId);
 			boardList.forEach(board -> {
 				Timeline timeline = new Timeline();
 				timeline.setAccount(optionalSrcAccount.get());
@@ -66,7 +77,7 @@ public class FollowService {
 			});
 		} else {
 			// Request to batch service
-			batchService.addTimelinesToFollower(followDto.getSrcId(), followDto.getDestId());
+			batchService.addTimelinesToFollower(srcId, destId);
 		}
 
 		return true;
