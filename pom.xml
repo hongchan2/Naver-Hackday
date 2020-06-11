@@ -70,13 +70,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.springframework.boot</groupId>
-        	<artifactId>spring-boot-starter-amqp</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.springframework.amqp</groupId>
-        	<artifactId>spring-rabbit-test</artifactId>
-        	<scope>test</scope>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -96,7 +96,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>8.24</version>
+                            <version>8.29</version>
                         </dependency>
                     </dependencies>
                 </plugin>
